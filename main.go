@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/sagansystems/terraform-provider-snowflake/snowflake"
 	"github.com/hashicorp/terraform/plugin"
+	"github.com/sagansystems/terraform-provider-snowflake/snowflake"
 )
 
 func main() {
