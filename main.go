@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ShopRunner/terraform-provider-snowflake/snowflake"
+	"github.com/sagansystems/terraform-provider-snowflake/snowflake"
 	"github.com/hashicorp/terraform/plugin"
 )
 
