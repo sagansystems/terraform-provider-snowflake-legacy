@@ -2,8 +2,9 @@ package snowflake
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
 	"log"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func resourceUser() *schema.Resource {
@@ -18,13 +19,6 @@ func resourceUser() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
-			},
-
-			"host": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Default:  "localhost",
 			},
 
 			"plaintext_password": &schema.Schema{
@@ -52,9 +46,7 @@ func resourceUser() *schema.Resource {
 func CreateUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("CREATE USER \"%s@%s\"",
-		d.Get("user").(string),
-		d.Get("host").(string))
+	stmtSQL := fmt.Sprintf("CREATE USER \"%s\"", d.Get("user").(string))
 
 	var password string
 	if v, ok := d.GetOk("plaintext_password"); ok {
@@ -75,7 +67,7 @@ func CreateUser(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	user := fmt.Sprintf("%s@%s", d.Get("user").(string), d.Get("host").(string))
+	user := fmt.Sprintf("%s", d.Get("user").(string))
 	d.SetId(user)
 
 	return nil
@@ -101,9 +93,7 @@ func UpdateUser(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if newpw != nil || newdefrole != nil {
-		stmtSQL := fmt.Sprintf("ALTER USER \"%s@%s\" SET ",
-			d.Get("user").(string),
-			d.Get("host").(string))
+		stmtSQL := fmt.Sprintf("ALTER USER \"%s\" SET ", d.Get("user").(string))
 
 		if newpw != nil {
 			stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"",
@@ -128,9 +118,7 @@ func UpdateUser(d *schema.ResourceData, meta interface{}) error {
 func ReadUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("SHOW USERS LIKE '%s@%s'",
-		d.Get("user").(string),
-		d.Get("host").(string))
+	stmtSQL := fmt.Sprintf("SHOW USERS LIKE '%s'", d.Get("user").(string))
 
 	log.Println("Executing statement:", stmtSQL)
 
@@ -149,9 +137,7 @@ func ReadUser(d *schema.ResourceData, meta interface{}) error {
 func DeleteUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("DROP USER \"%s@%s\"",
-		d.Get("user").(string),
-		d.Get("host").(string))
+	stmtSQL := fmt.Sprintf("DROP USER \"%s\"", d.Get("user").(string))
 
 	log.Println("Executing statement:", stmtSQL)
 
