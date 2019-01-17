@@ -37,7 +37,6 @@ func resourceUser() *schema.Resource {
 			"default_role": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "NULL",
 			},
 		},
 	}
@@ -59,7 +58,9 @@ func CreateUser(d *schema.ResourceData, meta interface{}) error {
 		stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"", password)
 	}
 
-	stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"", d.Get("default_role").(string))
+	if v, ok := d.GetOk("default_role"); ok {
+		stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"", v.(string))
+	}
 
 	log.Println("Executing statement:", stmtSQL)
 	_, err := db.Exec(stmtSQL)
