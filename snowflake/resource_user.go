@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hashicorp/go-version"
-
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -23,13 +21,6 @@ func resourceUser() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"host": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
-				Default:  "localhost",
-			},
-
 			"plaintext_password": &schema.Schema{
 				Type:      schema.TypeString,
 				Optional:  true,
@@ -43,6 +34,10 @@ func resourceUser() *schema.Resource {
 				Sensitive:     true,
 				Deprecated:    "Please use plaintext_password instead",
 			},
+			"default_role": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+			},
 		},
 	}
 }
@@ -50,9 +45,7 @@ func resourceUser() *schema.Resource {
 func CreateUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("CREATE USER '%s'@'%s'",
-		d.Get("user").(string),
-		d.Get("host").(string))
+	stmtSQL := fmt.Sprintf("CREATE USER \"%s\"", d.Get("user").(string))
 
 	var password string
 	if v, ok := d.GetOk("plaintext_password"); ok {
@@ -62,7 +55,11 @@ func CreateUser(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if password != "" {
-		stmtSQL = stmtSQL + fmt.Sprintf(" IDENTIFIED BY '%s'", password)
+		stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"", password)
+	}
+
+	if v, ok := d.GetOk("default_role"); ok {
+		stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"", v.(string))
 	}
 
 	log.Println("Executing statement:", stmtSQL)
@@ -71,7 +68,7 @@ func CreateUser(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	user := fmt.Sprintf("%s@%s", d.Get("user").(string), d.Get("host").(string))
+	user := fmt.Sprintf("%s", d.Get("user").(string))
 	d.SetId(user)
 
 	return nil
@@ -89,21 +86,24 @@ func UpdateUser(d *schema.ResourceData, meta interface{}) error {
 		newpw = nil
 	}
 
-	if newpw != nil {
-		var stmtSQL string
+	var newdefrole interface{}
+	if d.HasChange("default_role") {
+		_, newdefrole = d.GetChange("default_role")
+	} else {
+		newdefrole = nil
+	}
 
-		/* ALTER USER syntax introduced in MySQL 5.7.6 deprecates SET PASSWORD (GH-8230) */
-		ver, _ := version.NewVersion("5.7.6")
-		if conf.ServerVersion.LessThan(ver) {
-			stmtSQL = fmt.Sprintf("SET PASSWORD FOR '%s'@'%s' = PASSWORD('%s')",
-				d.Get("user").(string),
-				d.Get("host").(string),
+	if newpw != nil || newdefrole != nil {
+		stmtSQL := fmt.Sprintf("ALTER USER \"%s\" SET ", d.Get("user").(string))
+
+		if newpw != nil {
+			stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"",
 				newpw.(string))
-		} else {
-			stmtSQL = fmt.Sprintf("ALTER USER '%s'@'%s' IDENTIFIED BY '%s'",
-				d.Get("user").(string),
-				d.Get("host").(string),
-				newpw.(string))
+		}
+
+		if newdefrole != nil {
+			stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"",
+				newdefrole.(string))
 		}
 
 		log.Println("Executing query:", stmtSQL)
@@ -119,8 +119,7 @@ func UpdateUser(d *schema.ResourceData, meta interface{}) error {
 func ReadUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("SELECT USER FROM mysql.user WHERE USER='%s'",
-		d.Get("user").(string))
+	stmtSQL := fmt.Sprintf("SHOW USERS LIKE '%s'", d.Get("user").(string))
 
 	log.Println("Executing statement:", stmtSQL)
 
@@ -139,9 +138,7 @@ func ReadUser(d *schema.ResourceData, meta interface{}) error {
 func DeleteUser(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("DROP USER '%s'@'%s'",
-		d.Get("user").(string),
-		d.Get("host").(string))
+	stmtSQL := fmt.Sprintf("DROP USER \"%s\"", d.Get("user").(string))
 
 	log.Println("Executing statement:", stmtSQL)
 
