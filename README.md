@@ -86,7 +86,7 @@ resource "snowflake_warehouse" "warehouse_terraform" {
 | `max_cluster_count` | Min number of warehouses | String | FALSE |
 | `min_cluster_count` | Max number of warehouses | String | FALSE |
 | `auto_resume` | Should warehouse should auto resume | Boolean | FALSE |
-| `auto_suspend` | Should warehouse should auto suspend | Boolean | FALSE |
+| `auto_suspend` | Should warehouse should auto suspend | Integer | 600 |
 | `initially_suspended` | Should warehouse start off suspended  | Boolean | FALSE |
 | `resource_monitor` | Name of resource monitor assigned to warehouse | Boolean | FALSE |
 | `comment` | Additional comments | String | FALSE |
@@ -119,6 +119,5 @@ resource "snowflake_user" "tf_test_user" {
 | Property | Description | Type | Required |
 | ------ | ------ | ------ | ------ |
 | `user` | The username of the user | String | TRUE |
-| `host` | Host/TLD associated with the user. The default for this is localhost. This has a direct effect on the Username | String | FALSE |
 | `plaintext_password` | Password of the user. Ensure that passwords conform to the complexity requirements by Snowflake | String | TRUE |
 | `default_role` | Default role the user assumes. Defaults to `null` | String | FALSE |
