@@ -1,9 +1,10 @@
 package snowflake
 
 import (
+	"testing"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
-	"testing"
 )
 
 var testSnowflakeProviders map[string]terraform.ResourceProvider

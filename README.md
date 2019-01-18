@@ -121,3 +121,17 @@ resource "snowflake_user" "tf_test_user" {
 | `user` | The username of the user | String | TRUE |
 | `plaintext_password` | Password of the user. Ensure that passwords conform to the complexity requirements by Snowflake | String | TRUE |
 | `default_role` | Default role the user assumes. Defaults to `null` | String | FALSE |
+
+### Snowflake Role Management
+```
+resource "snowflake_role" "tf_test_role" {
+  name = "EXAMPLE_ROLE"
+  comment = "example role"
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `name` | The name of the role | String | TRUE |
+| `comment` | Additional comments | String | FALSE |

@@ -68,6 +68,7 @@ func Provider() terraform.ResourceProvider {
 			"snowflake_warehouse": resourceWarehouse(),
 			"snowflake_database":  resourceDatabase(),
 			"snowflake_user":      resourceUser(),
+			"snowflake_role":      resourceRole(),
 			//"snowflake_grant":     resourceGrant(),
 		},
 
