@@ -65,11 +65,11 @@ func Provider() terraform.ResourceProvider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"snowflake_warehouse": resourceWarehouse(),
-			"snowflake_database":  resourceDatabase(),
-			"snowflake_user":      resourceUser(),
-			"snowflake_role":      resourceRole(),
-			//"snowflake_grant":     resourceGrant(),
+			"snowflake_warehouse":            resourceWarehouse(),
+			"snowflake_database":             resourceDatabase(),
+			"snowflake_user":                 resourceUser(),
+			"snowflake_role":                 resourceRole(),
+			"snowflake_account_object_grant": resourceAccountObjectGrant(),
 		},
 
 		ConfigureFunc: providerConfigure,
