@@ -86,12 +86,35 @@ func readRole(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	defer rows.Close()
 
-	if !rows.Next() && rows.Err() == nil {
-		d.SetId("")
+	for rows.Next() {
+		var (
+			createdOn      string
+			name           string
+			isDefault      string
+			isCurrent      string
+			isInherited    string
+			assignedTo     string
+			grantedToRoles string
+			grantedRoles   string
+			owner          string
+			comment        string
+		)
+
+		if err := rows.Scan(&createdOn, &name, &isDefault, &isCurrent, &isInherited, assignedTo, &assignedTo, &grantedToRoles, &grantedRoles, &owner, &comment); err != nil {
+			return err
+		}
+
+		if name == d.Id() {
+			d.Set("name", name)
+			d.Set("comment", comment)
+			return nil
+		}
 	}
-	return rows.Err()
+
+	return fmt.Errorf("The role %s does not exist", d.Id())
 }
 
 func deleteRole(d *schema.ResourceData, meta interface{}) error {
