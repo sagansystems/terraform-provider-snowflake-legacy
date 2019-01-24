@@ -121,3 +121,17 @@ resource "snowflake_user" "tf_test_user" {
 | `user` | The username of the user | String | TRUE |
 | `plaintext_password` | Password of the user. Ensure that passwords conform to the complexity requirements by Snowflake | String | TRUE |
 | `default_role` | Default role the user assumes. Defaults to `null` | String | FALSE |
+
+### Snowflake Role Grant Management
+```
+resource "snowflake_role_grant" "tf_test_role_grant" {
+  role = "ACCOUNTADMIN"
+  user = "tf_test_user"
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `role` | The role to grant | String | TRUE |
+| `user` | The user to which to grant the role| String | TRUE |
