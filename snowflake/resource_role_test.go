@@ -11,7 +11,7 @@ func TestRoleSnowflakeDatabase(t *testing.T) {
 		Providers: testSnowflakeProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testSnowflakeUserConfig,
+				Config: testSnowflakeRoleConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(
 						"snowflake_role", "name", "shoprunner_terraform"),

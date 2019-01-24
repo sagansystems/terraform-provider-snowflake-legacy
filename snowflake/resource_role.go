@@ -43,71 +43,33 @@ func createRole(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	name := fmt.Sprintf("%s", d.Get("name").(string))
+	name := d.Get("name").(string)
 	d.SetId(name)
 
 	return nil
 }
 
 func updateRole(d *schema.ResourceData, meta interface{}) error {
+	if !d.HasChange("comment") {
+		return nil
+	}
+
+	var stmtSQL string
 	db := meta.(*providerConfiguration).DB
+	_, newComment := d.GetChange("comment")
 
-	var newName interface{}
-	var oldName interface{}
-	if d.HasChange("name") {
-		oldName, newName = d.GetChange("name")
+	if newComment.(string) == "" {
+		stmtSQL = fmt.Sprintf("ALTER ROLE \"%s\" UNSET COMMENT", d.Id())
 	} else {
-		oldName = d.Get("name")
-		newName = nil
+		stmtSQL = fmt.Sprintf("ALTER ROLE \"%s\" SET COMMENT = \"%s\"",
+			d.Id(),
+			newComment.(string))
 	}
 
-	var newComment interface{}
-	if d.HasChange("comment") {
-		_, newComment = d.GetChange("comment")
-	} else {
-		newComment = nil
-	}
-
-	var queries = make([]string, 0)
-	if newComment != nil {
-		if newComment.(string) == "" {
-			queries = append(queries, fmt.Sprintf("ALTER ROLE \"%s\" UNSET COMMENT",
-				oldName.(string)))
-		} else {
-			queries = append(queries, fmt.Sprintf("ALTER ROLE \"%s\" SET COMMENT = \"%s\"",
-				oldName.(string),
-				newComment.(string)))
-		}
-	}
-
-	if newName != nil {
-		queries = append(queries, fmt.Sprintf("ALTER ROLE \"%s\" RENAME TO \"%s\"",
-			oldName.(string),
-			newName.(string)))
-	}
-
-	// Execute queries in one transaction.
-	if len(queries) > 0 {
-		txn, err := db.Begin()
-		if err != nil {
-			return err
-		}
-
-		defer func() {
-			_ = txn.Rollback()
-		}()
-
-		for _, query := range queries {
-			log.Println("Executing statement:", query)
-
-			_, err := txn.Exec(query)
-
-			if err != nil {
-				return err
-			}
-		}
-
-		return txn.Commit()
+	log.Println("Executing statement:", stmtSQL)
+	_, err := db.Exec(stmtSQL)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -116,7 +78,7 @@ func updateRole(d *schema.ResourceData, meta interface{}) error {
 func readRole(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
 
-	stmtSQL := fmt.Sprintf("SHOW ROLES LIKE '%s'", d.Get("name").(string))
+	stmtSQL := fmt.Sprintf("SHOW ROLES LIKE '%s'", d.Id())
 
 	log.Println("Executing statement:", stmtSQL)
 
@@ -134,8 +96,7 @@ func readRole(d *schema.ResourceData, meta interface{}) error {
 
 func deleteRole(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
-	name := d.Get("name").(string)
-	stmtSQL := fmt.Sprintf("DROP ROLE  %s ", name)
+	stmtSQL := fmt.Sprintf("DROP ROLE \"%s\"", d.Id())
 
 	_, err := db.Exec(stmtSQL)
 	if err == nil {
