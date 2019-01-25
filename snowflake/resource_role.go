@@ -46,7 +46,7 @@ func createRole(d *schema.ResourceData, meta interface{}) error {
 	name := d.Get("name").(string)
 	d.SetId(name)
 
-	return nil
+	return readRole(d, meta)
 }
 
 func updateRole(d *schema.ResourceData, meta interface{}) error {
