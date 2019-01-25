@@ -11,21 +11,22 @@ func TestAccountObjectGrantSnowflakeDatabase(t *testing.T) {
 		Providers: testSnowflakeProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testSnowflakeUserConfig,
+				Config: testSnowflakeAccountObjectGrantConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"snowflake_account_object_grant", "object_type", "object_name", "priviles", "role", "grant_option", "shoprunner_terraform"),
-					resource.TestCheckResourceAttr("snowflake_account_object_grant", "name", "tf-test"),
+					resource.TestCheckResourceAttr("snowflake_account_object_grant.foo", "object_type", "test_type"),
+					resource.TestCheckResourceAttr("snowflake_account_object_grant.foo", "object_name", "test_name"),
+					resource.TestCheckResourceAttr("snowflake_account_object_grant.foo", "priviliges.#", "1"),
+					resource.TestCheckResourceAttr("snowflake_account_object_grant.foo", "grant_option", "false"),
+					resource.TestCheckResourceAttr("snowflake_account_object_grant.foo", "role", "test_role"),
 				),
 			},
 		},
 	})
 }
 
-var testSnowflakeRoleConfig = `resource "snowflake_account_object_grant" "shoprunner_terraform" {
+var testSnowflakeAccountObjectGrantConfig = `resource "snowflake_account_object_grant" "foo" {
 	object_type = "test_type"
 	object_name = "test_name"
-	priviliges = ["privilege1", privilege2"]
+	priviliges = ["privilege1"]
 	role = "test_role"
-	grant_option = true
 }`
