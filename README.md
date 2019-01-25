@@ -135,3 +135,23 @@ resource "snowflake_role" "tf_test_role" {
 | ------ | ------ | ------ | ------ |
 | `name` | The name of the role | String | TRUE |
 | `comment` | Additional comments | String | FALSE |
+
+### Snowflake Account Object Grant Management
+```
+resource "snowflake_account_object_grant" "tf_test_grant" {
+  object_type = "DATABASE"
+  object_name = "EXAMPLE_NAME"
+  privileges  = ["MODIFY"]
+  role        = "EXAMPLE_ROLE"
+  grant_option = false
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `object_type` | Type of the object: DATABASE, WAREHOUSE, RESOURCE MONITOR | String | TRUE |
+| `object_name` | The name of the object | String | TRUE |
+| `privileges` | Privileges to grant | String set | FALSE |
+| `role` | The role to which the privileges are granted | String | TRUE |
+| `grant_option` | Allows the recipient role to grant the privileges to other roles | Boolean | FALSE |
