@@ -13,15 +13,13 @@ func TestRoleSnowflakeDatabase(t *testing.T) {
 			{
 				Config: testSnowflakeRoleConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(
-						"snowflake_role", "name", "shoprunner_terraform"),
-					resource.TestCheckResourceAttr("snowflake_role", "name", "tf-test"),
+					resource.TestCheckResourceAttr("snowflake_role.foo", "name", "tf-test"),
 				),
 			},
 		},
 	})
 }
 
-var testSnowflakeRoleConfig = `resource "snowflake_role" "shoprunner_terraform" {
+var testSnowflakeRoleConfig = `resource "snowflake_role" "foo" {
 	name = "tf-test"
 }`
