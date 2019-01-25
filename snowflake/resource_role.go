@@ -103,7 +103,7 @@ func readRole(d *schema.ResourceData, meta interface{}) error {
 			comment        string
 		)
 
-		if err := rows.Scan(&createdOn, &name, &isDefault, &isCurrent, &isInherited, assignedTo, &assignedTo, &grantedToRoles, &grantedRoles, &owner, &comment); err != nil {
+		if err := rows.Scan(&createdOn, &name, &isDefault, &isCurrent, &isInherited, &assignedTo, &grantedToRoles, &grantedRoles, &owner, &comment); err != nil {
 			return err
 		}
 
