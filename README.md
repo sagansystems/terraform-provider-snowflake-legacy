@@ -135,3 +135,18 @@ resource "snowflake_role" "tf_test_role" {
 | ------ | ------ | ------ | ------ |
 | `name` | The name of the role | String | TRUE |
 | `comment` | Additional comments | String | FALSE |
+=======
+
+### Snowflake Role Grant Management
+```
+resource "snowflake_role_grant" "tf_test_role_grant" {
+  role = "ACCOUNTADMIN"
+  user = "tf_test_user"
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `role` | The role to grant | String | TRUE |
+| `user` | The user to which to grant the role| String | TRUE |
