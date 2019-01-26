@@ -70,6 +70,7 @@ func Provider() terraform.ResourceProvider {
 			"snowflake_user":                 resourceUser(),
 			"snowflake_role":                 resourceRole(),
 			"snowflake_account_object_grant": resourceAccountObjectGrant(),
+			"snowflake_schema_grant":         resourceSchemaGrant(),
 		},
 
 		ConfigureFunc: providerConfigure,

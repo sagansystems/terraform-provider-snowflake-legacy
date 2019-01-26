@@ -54,11 +54,25 @@ func resourceSchemaGrant() *schema.Resource {
 
 func createSchemaGrant(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
-	schemaName := d.Get("schema").(string)
-	databaseName := d.Get("database").(string)
-	role := d.Get("role").(string)
+	txn, err := db.Begin()
 
-	stmtSQL := fmt.Sprintf("GRANT %s ON %s TO ROLE \"%s\"",
+	defer func() {
+		_ = txn.Rollback()
+	}()
+
+	var (
+		schemaName   = d.Get("schema").(string)
+		databaseName = d.Get("database").(string)
+		role         = d.Get("role").(string)
+	)
+
+	stmtSQL := fmt.Sprintf("USE DATABASE \"%s\"", databaseName)
+	_, err = txn.Exec(stmtSQL)
+	if err != nil {
+		return err
+	}
+
+	stmtSQL = fmt.Sprintf("GRANT %s ON %s TO ROLE \"%s\"",
 		privilegesSetToString(d.Get("privileges").(*schema.Set)),
 		generateRecipientSchemaString(schemaName, databaseName),
 		role)
@@ -68,7 +82,12 @@ func createSchemaGrant(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Println("Executing statement:", stmtSQL)
-	_, err := db.Exec(stmtSQL)
+	_, err = txn.Exec(stmtSQL)
+	if err != nil {
+		return err
+	}
+
+	err = txn.Commit()
 	if err != nil {
 		return err
 	}
@@ -131,17 +150,34 @@ func readSchemaGrant(d *schema.ResourceData, meta interface{}) error {
 
 func deleteSchemaGrant(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
+	txn, err := db.Begin()
 	databaseName, schemaName, role := getParamsFromSchemaGrantID(d.Id())
 
-	stmtSQL := fmt.Sprintf("REVOKE ALL PRIVILEGES ON %s FROM ROLE \"%s\"",
+	defer func() {
+		_ = txn.Rollback()
+	}()
+
+	stmtSQL := fmt.Sprintf("USE DATABASE \"%s\"", databaseName)
+	_, err = txn.Exec(stmtSQL)
+	if err != nil {
+		return err
+	}
+
+	stmtSQL = fmt.Sprintf("REVOKE ALL PRIVILEGES ON %s FROM ROLE \"%s\"",
 		generateRecipientSchemaString(schemaName, databaseName),
 		role)
 
 	log.Println("Executing statement:", stmtSQL)
-	_, err := db.Exec(stmtSQL)
+	_, err = txn.Exec(stmtSQL)
+	if err != nil {
+		return nil
+	}
+
+	err = txn.Commit()
 	if err == nil {
 		d.SetId("")
 	}
+
 	return err
 }
 
@@ -159,7 +195,7 @@ func generateRecipientSchemaString(schema, database string) string {
 	if schema == "ALL" {
 		return fmt.Sprintf("ALL SCHEMAS IN DATABASE \"%s\"", database)
 	}
-	return fmt.Sprintf("SCHEMA \"%s.%s\"", database, schema)
+	return fmt.Sprintf("SCHEMA \"%s\"", schema)
 }
 
 func generateSchemaGrantID(database, schema, role string) string {
