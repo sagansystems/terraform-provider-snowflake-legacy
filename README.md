@@ -152,6 +152,26 @@ resource "snowflake_account_object_grant" "tf_test_grant" {
 | ------ | ------ | ------ | ------ |
 | `object_type` | Type of the object: DATABASE, WAREHOUSE, RESOURCE MONITOR | String | TRUE |
 | `object_name` | The name of the object | String | TRUE |
-| `privileges` | Privileges to grant | String set | FALSE |
+| `privileges` | Privileges to grant (["ALL"] for all privileges) | String set | FALSE |
+| `role` | The role to which the privileges are granted | String | TRUE |
+| `grant_option` | Allows the recipient role to grant the privileges to other roles | Boolean | FALSE |
+
+### Snowflake Schema Grant Management
+```
+resource "snowflake_schema_grant" "tf_test_grant" {
+  database = "DATABASE"
+  schema = "EXAMPLE_SCHEMA"
+  privileges  = ["MODIFY"]
+  role        = "EXAMPLE_ROLE"
+  grant_option = false
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `schema` | The name of the schema ("ALL" if changes should be applied to all) | String | TRUE |
+| `database` | The name of the database | String | TRUE |
+| `privileges` | Privileges to grant (["ALL"] for all privileges) | String set | FALSE |
 | `role` | The role to which the privileges are granted | String | TRUE |
 | `grant_option` | Allows the recipient role to grant the privileges to other roles | Boolean | FALSE |
