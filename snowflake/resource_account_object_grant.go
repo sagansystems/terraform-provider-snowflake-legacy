@@ -54,12 +54,15 @@ func resourceAccountObjectGrant() *schema.Resource {
 
 func createAccountObjectGrant(d *schema.ResourceData, meta interface{}) error {
 	db := meta.(*providerConfiguration).DB
+	objectType := d.Get("object_type").(string)
+	objectName := d.Get("object_name").(string)
+	role := d.Get("role").(string)
 
 	stmtSQL := fmt.Sprintf("GRANT %s ON %s \"%s\" TO ROLE \"%s\"",
-		getPrivilegesString(d.Get("privileges").(*schema.Set)),
-		d.Get("object_type").(string),
-		d.Get("object_name").(string),
-		d.Get("role").(string))
+		privilegesSetToString(d.Get("privileges").(*schema.Set)),
+		objectType,
+		objectName,
+		role)
 
 	if d.Get("grant_option").(bool) {
 		stmtSQL += " WITH GRANT OPTION"
@@ -71,10 +74,7 @@ func createAccountObjectGrant(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	id := generateGrantID(
-		d.Get("object_type").(string),
-		d.Get("object_name").(string),
-		d.Get("role").(string))
+	id := generateGrantID(objectType, objectName, role)
 	d.SetId(id)
 
 	return readAccountObjectGrant(d, meta)
@@ -89,7 +89,6 @@ func readAccountObjectGrant(d *schema.ResourceData, meta interface{}) error {
 		objectName)
 
 	log.Println("Executing statement:", stmtSQL)
-
 	rows, err := db.Query(stmtSQL)
 	if err != nil {
 		return err
