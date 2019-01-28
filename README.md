@@ -136,6 +136,9 @@ resource "snowflake_role" "tf_test_role" {
 | `name` | The name of the role | String | TRUE |
 | `comment` | Additional comments | String | FALSE |
 
+### Snowflake Grant Management
+Please note that that mixing grant management for a role with and without terraform is strongly discouraged, since it may result in terraform deleting grants which were added outside of terraform when performing updates or deletes.
+
 ### Snowflake Account Object Grant Management
 ```
 resource "snowflake_account_object_grant" "tf_test_grant" {

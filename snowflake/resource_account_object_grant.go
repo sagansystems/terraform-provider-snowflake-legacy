@@ -149,19 +149,6 @@ func deleteAccountObjectGrant(d *schema.ResourceData, meta interface{}) error {
 	return err
 }
 
-func getPrivilegesString(priviligesSet *schema.Set) string {
-	if priviligesSet.Contains("ALL") {
-		return "ALL"
-	}
-
-	var privilegesList []string
-	for _, v := range priviligesSet.List() {
-		privilegesList = append(privilegesList, v.(string))
-	}
-
-	return strings.Join(privilegesList, ",")
-}
-
 func generateGrantID(objectType, objectName, role string) string {
 	return fmt.Sprintf("%s-%s-%s", objectType, objectName, role)
 }
