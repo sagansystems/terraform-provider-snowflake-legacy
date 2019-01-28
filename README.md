@@ -135,7 +135,6 @@ resource "snowflake_role" "tf_test_role" {
 | ------ | ------ | ------ | ------ |
 | `name` | The name of the role | String | TRUE |
 | `comment` | Additional comments | String | FALSE |
-=======
 
 ### Snowflake Role Grant Management
 ```
@@ -150,3 +149,46 @@ resource "snowflake_role_grant" "tf_test_role_grant" {
 | ------ | ------ | ------ | ------ |
 | `role` | The role to grant | String | TRUE |
 | `user` | The user to which to grant the role| String | TRUE |
+
+### Snowflake Grant Management
+Please note that that mixing grant management for a role with and without terraform is strongly discouraged, since it may result in terraform deleting grants which were added outside of terraform when performing updates or deletes.
+
+### Snowflake Account Object Grant Management
+```
+resource "snowflake_account_object_grant" "tf_test_grant" {
+  object_type = "DATABASE"
+  object_name = "EXAMPLE_NAME"
+  privileges  = ["MODIFY"]
+  role        = "EXAMPLE_ROLE"
+  grant_option = false
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `object_type` | Type of the object: DATABASE, WAREHOUSE, RESOURCE MONITOR | String | TRUE |
+| `object_name` | The name of the object | String | TRUE |
+| `privileges` | Privileges to grant (["ALL"] for all privileges) | String set | FALSE |
+| `role` | The role to which the privileges are granted | String | TRUE |
+| `grant_option` | Allows the recipient role to grant the privileges to other roles | Boolean | FALSE |
+
+### Snowflake Schema Grant Management
+```
+resource "snowflake_schema_grant" "tf_test_grant" {
+  database = "DATABASE"
+  schema = "EXAMPLE_SCHEMA"
+  privileges  = ["MODIFY"]
+  role        = "EXAMPLE_ROLE"
+  grant_option = false
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------ | ------ |
+| `schema` | The name of the schema ("ALL" if changes should be applied to all) | String | TRUE |
+| `database` | The name of the database | String | TRUE |
+| `privileges` | Privileges to grant (["ALL"] for all privileges) | String set | FALSE |
+| `role` | The role to which the privileges are granted | String | TRUE |
+| `grant_option` | Allows the recipient role to grant the privileges to other roles | Boolean | FALSE |
