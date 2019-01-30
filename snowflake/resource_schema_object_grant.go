@@ -276,7 +276,7 @@ func generateRecipientSchemaObjectString(objectType, objectName, schema string, 
 	}
 
 	if len(objectName) > 0 {
-		return fmt.Sprintf("\"%s\" \"%s\"", objectType, objectName)
+		return fmt.Sprintf("%s \"%s\"", objectType, objectName)
 	}
 
 	return fmt.Sprintf("ALL %sS IN SCHEMA \"%s\"", objectType, schema)
