@@ -1,0 +1,28 @@
+version: "1.0"
+steps:
+  build:
+    type: build
+    title: Build terraform-provider-snowflake
+    dockerfile: Dockerfile
+    image_name: terraform-providers/terraform-provider-snowflake
+    tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
+
+  publish:
+    type: push
+    title: Publish terraform-provider-snowflake
+    candidate: ${{build}}
+    tags:
+      - ${{CF_BRANCH_TAG_NORMALIZED}}
+    registry: gladly
+
+  publish_latest:
+    type: push
+    title: Publish terraform-provider-snowflake with latest tag
+    candidate: ${{build}}
+    tags:
+      - latest
+    registry: gladly
+    when:
+      branch:
+        only:
+          - master
