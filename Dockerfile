@@ -13,6 +13,7 @@ COPY go.mod .
 COPY go.sum .
 
 RUN gofmt -l `find . -name '*.go'`
+RUN echo $(go list ./...) | GO111MODULE=on xargs -t -n4 go test  -timeout=30s -parallel=4
 RUN GO111MODULE=on go build
 
 # back to the base-ics, we only need the binary
