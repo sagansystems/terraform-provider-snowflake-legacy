@@ -4,7 +4,7 @@ steps:
     type: build
     title: Build terraform-provider-snowflake
     dockerfile: Dockerfile
-    image_name: gladly/terraform-provider-snowflake
+    image_name: platform/terraform-provider-snowflake
     tag: "${{CF_BRANCH_TAG_NORMALIZED}}"
 
   publish:
