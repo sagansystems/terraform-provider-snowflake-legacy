@@ -18,7 +18,4 @@ RUN GO111MODULE=on go build
 # back to the base-ics, we only need the binary
 FROM base
 
-ENV BIN_DIR=/go/src/github.com/sagansystems/terraform-provider-snowflake
-WORKDIR /usr/local/bin
-
 COPY --from=builder /go/src/github.com/sagansystems/terraform-provider-snowflake/terraform-provider-snowflake /usr/local/bin/
