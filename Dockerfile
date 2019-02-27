@@ -21,4 +21,4 @@ FROM base
 ENV BIN_DIR=/go/src/github.com/sagansystems/terraform-provider-snowflake
 WORKDIR /usr/local/bin
 
-COPY --from=builder ${BIN_DIR}/terraform-provider-snowflake .
+COPY --from=builder /go/src/github.com/sagansystems/terraform-provider-snowflake/terraform-provider-snowflake /usr/local/bin/
