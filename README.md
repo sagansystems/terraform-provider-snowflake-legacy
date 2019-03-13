@@ -108,10 +108,10 @@ resource "snowflake_database" "database_terraform" {
 ### Snowflake User Management
 ```
 resource "snowflake_user" "tf_test_user" {
-  user = "terraform.test"
-  host = "mydomain.org"
+  user               = "terraform.test"
   plaintext_password = "12345QWERTYqwerty"
-  default_role = "READONLY"
+  rsa_public_key     = "MIIBIjANBgkqhkiG9w...AQAB"
+  default_role       = "READONLY"
 }
 ```
 
@@ -119,7 +119,8 @@ resource "snowflake_user" "tf_test_user" {
 | Property | Description | Type | Required |
 | ------ | ------ | ------ | ------ |
 | `user` | The username of the user | String | TRUE |
-| `plaintext_password` | Password of the user. Ensure that passwords conform to the complexity requirements by Snowflake | String | TRUE |
+| `plaintext_password` | Password of the user. Ensure that passwords conform to the complexity requirements by Snowflake | String | FALSE |
+| `rsa_public_key` | RSA public key to associate with the user. | String | FALSE |
 | `default_role` | Default role the user assumes. Defaults to `null` | String | FALSE |
 
 ### Snowflake Role Management

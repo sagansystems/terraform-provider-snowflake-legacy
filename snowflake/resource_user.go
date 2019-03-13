@@ -20,12 +20,16 @@ func resourceUser() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-
 			"plaintext_password": &schema.Schema{
 				Type:      schema.TypeString,
 				Optional:  true,
 				Sensitive: true,
 				StateFunc: hashSum,
+			},
+			"rsa_public_key": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Default:  "",
 			},
 			"password": &schema.Schema{
 				Type:          schema.TypeString,
@@ -56,6 +60,10 @@ func CreateUser(d *schema.ResourceData, meta interface{}) error {
 
 	if password != "" {
 		stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"", password)
+	}
+
+	if v, ok := d.GetOk("rsa_public_key"); ok {
+		stmtSQL = stmtSQL + fmt.Sprintf(" RSA_PUBLIC_KEY = \"%s\"", v.(string))
 	}
 
 	if v, ok := d.GetOk("default_role"); ok {
@@ -93,17 +101,26 @@ func UpdateUser(d *schema.ResourceData, meta interface{}) error {
 		newdefrole = nil
 	}
 
-	if newpw != nil || newdefrole != nil {
+	var newRSAPublicKey interface{}
+	if d.HasChange("rsa_public_key") {
+		_, newRSAPublicKey = d.GetChange("rsa_public_key")
+	} else {
+		newRSAPublicKey = nil
+	}
+
+	if newpw != nil || newdefrole != nil || newRSAPublicKey != nil {
 		stmtSQL := fmt.Sprintf("ALTER USER \"%s\" SET ", d.Get("user").(string))
 
 		if newpw != nil {
-			stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"",
-				newpw.(string))
+			stmtSQL = stmtSQL + fmt.Sprintf(" PASSWORD = \"%s\"", newpw.(string))
+		}
+
+		if newRSAPublicKey != nil {
+			stmtSQL = stmtSQL + fmt.Sprintf(" RSA_PUBLIC_KEY = \"%s\"", newRSAPublicKey.(string))
 		}
 
 		if newdefrole != nil {
-			stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"",
-				newdefrole.(string))
+			stmtSQL = stmtSQL + fmt.Sprintf(" DEFAULT_ROLE = \"%s\"", newdefrole.(string))
 		}
 
 		log.Println("Executing query:", stmtSQL)
