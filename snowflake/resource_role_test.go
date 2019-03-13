@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestRoleSnowflakeDatabase(t *testing.T) {
+func TestAccRoleSnowflakeDatabase(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		Providers: testSnowflakeProviders,
 		Steps: []resource.TestStep{
