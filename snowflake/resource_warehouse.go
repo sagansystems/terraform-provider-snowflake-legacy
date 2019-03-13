@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"bytes"
+
 	"github.com/hashicorp/errwrap"
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -24,8 +25,6 @@ const (
 	whAutoSuspend        = "auto_suspend"
 	whAutoResume         = "auto_resume"
 	whInitiallySuspended = "initially_suspended"
-	whResourceMonitor    = "resource_monitor"
-	//whUUIDAttr								= "UUID"
 )
 
 func resourceWarehouse() *schema.Resource {
@@ -112,13 +111,6 @@ func resourceWarehouse() *schema.Resource {
 				ForceNew:    false,
 				Description: "Specifies whether the warehouse is created initially in suspended state.",
 			},
-			whResourceMonitor: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				ForceNew:    false,
-				Description: "Specifies the name of a resource monitor that is explicitly assigned to the warehouse.",
-			},
 		},
 	}
 }
@@ -187,12 +179,6 @@ func readWarehouse(d *schema.ResourceData, meta interface{}) error {
 		&actives, &pendings, &failed, &suspended, &uuid, &scalingPolicy,
 	)
 	if err != nil {
-		//if mysqlErr, ok := err.(*mysql.MySQLError); ok {
-		//	if mysqlErr.Number == unknownDatabaseErrCode {
-		//		d.SetId("")
-		//		return nil
-		//	}
-		//}
 		return fmt.Errorf("Error during show create warehouse: %s", err)
 	}
 

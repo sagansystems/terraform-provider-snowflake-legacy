@@ -67,11 +67,11 @@ $ export SF_ACCOUNT
 ### Snowflake Warehouse Management
 ```
 resource "snowflake_warehouse" "warehouse_terraform" {
-      name              =   "dev_wh"
-      warehouse_size    =   "SMALL"
-      auto_resume       =   false
-      auto_suspend      =   600
-      comment           =   "terraform development warehouse"
+      name           = "dev_wh"
+      warehouse_size = "SMALL"
+      auto_resume    = false
+      auto_suspend   = 600
+      comment        = "terraform development warehouse"
 }
 ```
 
@@ -79,23 +79,22 @@ resource "snowflake_warehouse" "warehouse_terraform" {
 | Property | Description | Type | Required |
 | ------ | ------ | ------ | ------ |
 | `name` | Name of the Snowflake warehouse | String | TRUE |
-| `max_concurrency_level` | Max concurrent SQL statements that can run on warehouse | String | FALSE |
-| `statement_queued_timeout_in_seconds` | Time, in seconds, an SQL statement can be queued before being cancelled | String | FALSE |
-| `statement_timeout_in_seconds` | Time, in seconds, after which an SQL statement will be terminated | String | FALSE |
+| `max_concurrency_level` | Max concurrent SQL statements that can run on warehouse | Integer | FALSE |
+| `statement_queued_timeout_in_seconds` | Time, in seconds, an SQL statement can be queued before being cancelled | Integer | FALSE |
+| `statement_timeout_in_seconds` | Time, in seconds, after which an SQL statement will be terminated | Integer | FALSE |
 | `warehouse_size` | Size of the warehouse | String | FALSE |
-| `max_cluster_count` | Min number of warehouses | String | FALSE |
-| `min_cluster_count` | Max number of warehouses | String | FALSE |
+| `max_cluster_count` | Min number of warehouses | Integer | FALSE |
+| `min_cluster_count` | Max number of warehouses | Integer | FALSE |
 | `auto_resume` | Should warehouse should auto resume | Boolean | FALSE |
-| `auto_suspend` | Should warehouse should auto suspend | Integer | 600 |
+| `auto_suspend` | Number of seconds after which the warehouse should suspend | Integer | FALSE |
 | `initially_suspended` | Should warehouse start off suspended  | Boolean | FALSE |
-| `resource_monitor` | Name of resource monitor assigned to warehouse | Boolean | FALSE |
 | `comment` | Additional comments | String | FALSE |
 
 ### Snowflake Database Management
 ```
 resource "snowflake_database" "database_terraform" {
-      name              =   "dev_db"
-      comment           =   "terraform development database"
+      name    = "dev_db"
+      comment = "terraform development database"
 }
 ```
 
@@ -126,7 +125,7 @@ resource "snowflake_user" "tf_test_user" {
 ### Snowflake Role Management
 ```
 resource "snowflake_role" "tf_test_role" {
-  name = "EXAMPLE_ROLE"
+  name    = "EXAMPLE_ROLE"
   comment = "example role"
 }
 ```
@@ -157,10 +156,10 @@ Please note that that mixing grant management for a role with and without terraf
 ### Snowflake Account Object Grant Management
 ```
 resource "snowflake_account_object_grant" "tf_test_grant" {
-  object_type = "DATABASE"
-  object_name = "EXAMPLE_NAME"
-  privileges  = ["MODIFY"]
-  role        = "EXAMPLE_ROLE"
+  object_type  = "DATABASE"
+  object_name  = "EXAMPLE_NAME"
+  privileges   = ["MODIFY"]
+  role         = "EXAMPLE_ROLE"
   grant_option = false
 }
 ```
@@ -177,10 +176,10 @@ resource "snowflake_account_object_grant" "tf_test_grant" {
 ### Snowflake Schema Grant Management
 ```
 resource "snowflake_schema_grant" "tf_test_grant" {
-  database = "DATABASE"
-  schema = "EXAMPLE_SCHEMA"
-  privileges  = ["MODIFY"]
-  role        = "EXAMPLE_ROLE"
+  database     = "DATABASE"
+  schema       = "EXAMPLE_SCHEMA"
+  privileges   = ["MODIFY"]
+  role         = "EXAMPLE_ROLE"
   grant_option = false
 }
 ```
