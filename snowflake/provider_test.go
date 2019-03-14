@@ -13,7 +13,7 @@ var testSnowflakeProvider *schema.Provider
 func init() {
 	testSnowflakeProvider = Provider().(*schema.Provider)
 	testSnowflakeProviders = map[string]terraform.ResourceProvider{
-		"snowflakedb": testSnowflakeProvider,
+		"snowflake": testSnowflakeProvider,
 	}
 }
 

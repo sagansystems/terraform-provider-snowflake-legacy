@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 )
 
-func TestSchemaGrantSnowflake(t *testing.T) {
+func TestAccSchemaGrantSnowflake(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		Providers: testSnowflakeProviders,
 		Steps: []resource.TestStep{
