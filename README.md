@@ -118,7 +118,6 @@ resource "snowflake_schema" "default" {
 | `database` | Database in which schema should be created| String | TRUE |
 | `schema` | Name of the schema | String | TRUE |
 
-
 ### Snowflake User Management
 ```
 resource "snowflake_user" "tf_test_user" {
