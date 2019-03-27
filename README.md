@@ -104,6 +104,21 @@ resource "snowflake_database" "database_terraform" {
 | `name` | Name of the Snowflake database | String | TRUE |
 | `comment` | Additional comments | String | FALSE |
 
+### Snowflake Schema Management
+```
+resource "snowflake_schema" "default" {
+      database = "dev_db"
+      schema   = "default"
+}
+```
+
+##### Properties
+| Property | Description | Type | Required |
+| ------ | ------ | ------   | ------ |
+| `database` | Database in which schema should be created| String | TRUE |
+| `schema` | Name of the schema | String | TRUE |
+
+
 ### Snowflake User Management
 ```
 resource "snowflake_user" "tf_test_user" {
