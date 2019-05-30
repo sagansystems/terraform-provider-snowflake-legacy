@@ -74,6 +74,7 @@ func Provider() terraform.ResourceProvider {
 			"snowflake_schema":               resourceSchema(),
 			"snowflake_schema_grant":         resourceSchemaGrant(),
 			"snowflake_schema_object_grant":  resourceSchemaObjectGrant(),
+			"snowflake_pipe":                 resourcePipe(),
 		},
 
 		ConfigureFunc: providerConfigure,
