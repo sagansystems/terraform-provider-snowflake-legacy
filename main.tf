@@ -10,6 +10,7 @@ resource "snowflake_database" "database_terraform" {
   name    = "dev_db"
   comment = "terraform development database"
 }
+
 resource "snowflake_schema" "schema_terraform" {
   schema   = "dev_schema"
   database = "dev_db"
