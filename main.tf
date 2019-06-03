@@ -10,8 +10,14 @@ resource "snowflake_database" "database_terraform" {
   name    = "dev_db"
   comment = "terraform development database"
 }
+resource "snowflake_schema" "schema_terraform" {
+  schema   = "dev_schema"
+  database = "dev_db"
+}
 
 resource "snowflake_table" "table_terraform" {
-  name    = "dev_table"
-  comment = "terraform development table"
+  database = "dev_db"
+  schema   = "dev_schema"
+  table    = "dev_table"
+  columns  = "jsontext variant"
 }
