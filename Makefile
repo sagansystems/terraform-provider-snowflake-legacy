@@ -6,6 +6,11 @@ default: build
 build: fmtcheck
 	GO111MODULE=on go install
 
+dev-image:
+	# don't remove the @ unless you want the GITHUB_TOKEN printed to the terminal
+	@docker build . \
+		--build-arg github_token=$(GITHUB_TOKEN) -t harbor.tools.gladly.com/platform/terraform-provider-snowflake:dev
+
 test: fmtcheck
 	go test -i $(TEST) || exit 1
 	echo $(TEST) | \
