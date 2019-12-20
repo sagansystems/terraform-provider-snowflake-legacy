@@ -25,10 +25,11 @@ func resourceDatabase() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			dbNameAttr: {
-				Type:        schema.TypeString,
-				Required:    true,
-				ForceNew:    false,
-				Description: "Identifier for the Snowflake database ",
+				Type:             schema.TypeString,
+				Required:         true,
+				ForceNew:         false,
+				Description:      "Identifier for the Snowflake database ",
+				DiffSuppressFunc: ignoreCase,
 			},
 			dbCommentAttr: {
 				Type:        schema.TypeString,
@@ -88,13 +89,18 @@ func readDatabase(d *schema.ResourceData, meta interface{}) error {
 	fmt.Printf(" Read Database Executing query: %s \n", stmtSQL)
 	log.Println("Executing query:", stmtSQL)
 
-	var createdOn, name, isDefault, isCurrent, origin, owner, comment, options, retentionTime sql.NullString
+	var name, comment string
+	var createdOn, isDefault, isCurrent, origin, owner, options, retentionTime sql.NullString
 
 	err := db.QueryRow(stmtSQL).Scan(
 		&createdOn, &name, &isDefault, &isCurrent, &origin, &owner, &comment, &options, &retentionTime,
 	)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			d.SetId("")
+			return nil
+		}
 		return fmt.Errorf("Error during show databases like: %s", err)
 	}
 

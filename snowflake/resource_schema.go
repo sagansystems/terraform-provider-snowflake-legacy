@@ -85,7 +85,9 @@ func readSchema(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	return fmt.Errorf("the schema %s.%s does not exist.", database, schema)
+	// the terraform thing to do if the resource does not exist is set id to the empty string
+	d.SetId("")
+	return nil
 }
 
 func deleteSchema(d *schema.ResourceData, meta interface{}) error {
