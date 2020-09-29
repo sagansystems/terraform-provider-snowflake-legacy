@@ -1,3 +1,8 @@
+# DEPRECATED
+This provider is no longer being used. Use the new [`terraform-provider-snowflake`](https://github.com/sagansystems/terraform-provider-snowflake) instead.
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
 Terraform Provider
 ==================
 
