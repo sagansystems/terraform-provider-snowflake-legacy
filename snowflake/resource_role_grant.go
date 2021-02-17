@@ -21,7 +21,6 @@ func resourceRoleGrant() *schema.Resource {
 				Description: "Name of the role to grant",
 				ForceNew:    true,
 			},
-
 			"user": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,

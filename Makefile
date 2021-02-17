@@ -6,6 +6,12 @@ default: build
 build: fmtcheck
 	GO111MODULE=on go install
 
+# this only works on OS X
+install-local: build
+	@mkdir -p .terraform/plugins/darwin_amd64
+	@cp $(GOPATH)/bin/terraform-provider-snowflake .terraform/plugins/darwin_amd64/terraform-provider-snowflake_v0.1.0
+	@terraform init
+
 dev-image:
 	# don't remove the @ unless you want the GITHUB_TOKEN printed to the terminal
 	@docker build . \
